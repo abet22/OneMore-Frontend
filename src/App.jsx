@@ -13,7 +13,7 @@ export default function App() {
       const token = await result.user.getIdToken();
 
       // Enviamos el token al backend para registrar/login
-      const response = await fetch("http://192.168.1.115:8000/login", {
+      const response = await fetch("/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: token }),

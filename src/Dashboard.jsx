@@ -6,7 +6,7 @@ export default function Dashboard({ user }) {
   const [newItemTitle, setNewItemTitle] = useState("");
   const [loading, setLoading] = useState(true);
 
-  const API_URL = "http://192.168.1.115:8000";
+  const API_URL = "/api";
 
   useEffect(() => {
     fetchItems();
@@ -44,12 +44,12 @@ export default function Dashboard({ user }) {
     } catch (error) { console.error(error); }
   };
 
-  // --- FUNCIÓN NUEVA: ACTUALIZAR CONTADOR ---
+  // --- ACTUALIZAR CONTADOR ---
   const updateCount = async (id, currentCount, change) => {
     const newCount = currentCount + change;
     if (newCount < 0) return; // No permitir negativos
 
-    // 1. Actualización Optimista (Visualmente instantáneo)
+    // 1. Actualización Optimista 
     const oldItems = [...items];
     setItems(items.map(item => 
       item.id === id ? { ...item, count: newCount } : item
@@ -63,13 +63,12 @@ export default function Dashboard({ user }) {
         body: JSON.stringify({ count: newCount }),
       });
     } catch (error) {
-      // Si falla, revertimos el cambio
       setItems(oldItems);
       console.error("Error actualizando", error);
     }
   };
 
-  // --- FUNCIÓN NUEVA: BORRAR ---
+  // --- FUNCIÓN BORRAR ---
   const deleteItem = async (id) => {
     if(!confirm("¿Borrar este contador?")) return;
     try {
@@ -86,7 +85,7 @@ export default function Dashboard({ user }) {
     <div className="min-h-screen bg-gray-50 p-6 flex justify-center">
       <div className="w-full max-w-md">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">OneMore 🍺</h1>
+          <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">OneMore</h1>
           <div className="text-xs text-gray-400 bg-gray-200 px-2 py-1 rounded-full">{user.email.split('@')[0]}</div>
         </div>
 
