@@ -150,12 +150,24 @@ export default function Dashboard({ user }) {
     <div className="min-h-screen bg-gray-50 p-4 relative">
       <div className="max-w-md mx-auto">
         
-        {/* HEADER */}
+{/* HEADER */}
         <header className="flex justify-between items-center mb-6 bg-white p-4 rounded-xl shadow-sm">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-800">OneMore</h1>
-            <p className="text-xs text-gray-500">Hola, {user.displayName}</p>
+          
+          {/* SECCIÓN IZQUIERDA: LOGO + TEXTO */}
+          <div className="flex items-center gap-3">
+            {/* AQUÍ VA TU LOGO */}
+            <img 
+              src="/golden_logo.png" 
+              alt="Logo OneMore" 
+              className="h-12 w-12 object-contain" // Ajusta h-12 w-12 según el tamaño que quieras
+            />
+            
+            <div>
+              <h1 className="text-2xl font-bold text-gray-800 leading-none">OneMore</h1>
+              <p className="text-xs text-gray-500">Hola, {user.displayName}</p>
+            </div>
           </div>
+          
           <button onClick={handleLogout} className="text-sm text-red-500 border border-red-100 px-3 py-1 rounded-lg hover:bg-red-50 transition">
             Salir
           </button>
