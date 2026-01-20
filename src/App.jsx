@@ -5,6 +5,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import Dashboard from "./Dashboard";
 import ItemDetail from "./ItemDetail"; // <--- Tu nueva página
 import HiddenItems from "./HiddenItems"; // <--- Página de items ocultos
+import FullLogs from "./FullLogs"; // <--- Página de historial completo
 import Login from "./Login";
 
 export default function App() {
@@ -49,6 +50,7 @@ export default function App() {
           <>
             <Route path="/" element={<Dashboard user={user} />} />
             <Route path="/item/:id" element={<ItemDetail user={user} />} />
+            <Route path="/item/:id/full-logs" element={<FullLogs user={user} />} />
             <Route path="/hidden" element={<HiddenItems user={user} />} />
             {/* Cualquier otra ruta redirige al Dashboard */}
             <Route path="*" element={<Navigate to="/" />} />
