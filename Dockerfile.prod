@@ -1,0 +1,19 @@
+# ETAPA 1: Construcción (Build)
+# Usamos Node 22 para que sea compatible con Vite 6
+FROM node:22-alpine as build
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+# Esto crea la carpeta 'dist' con tu web optimizada
+RUN npm run build 
+
+# ETAPA 2: Servidor (Nginx)
+FROM nginx:alpine
+# Copiamos los archivos compilados de la etapa 1 a Nginx
+COPY --from=build /app/dist /usr/share/nginx/html
+# Copiamos la configuración del servidor
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

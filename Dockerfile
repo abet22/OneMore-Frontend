@@ -1,19 +1,14 @@
-# Usamos Node.js ligero
-FROM node:20-alpine
+# Usamos Node.js 22 (Vite lo necesita)
+FROM node:22-slim
 
 WORKDIR /app
 
-# Copiamos los archivos de dependencias primero (para aprovechar caché)
+# Copiamos package.json e instalamos dependencias
 COPY package.json package-lock.json ./
-
-# Instalamos
 RUN npm install
-
-# Copiamos el resto
-COPY . .
 
 # Exponemos el puerto de Vite
 EXPOSE 5173
 
-# Arrancamos en modo desarrollo visible para la red
-CMD ["npm", "run", "dev", "--", "--host"]
+# Comando para desarrollo
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
