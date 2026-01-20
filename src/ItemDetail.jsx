@@ -8,6 +8,7 @@ export default function ItemDetail({ user }) {
   const [logs, setLogs] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState("");
+  const [editDesc, setEditDesc] = useState("");
 
   const API_URL = "/api";
 
@@ -19,16 +20,16 @@ export default function ItemDetail({ user }) {
   // Obtener datos del Item
   const fetchItemData = async () => {
     const token = await user.getIdToken();
-    const res = await fetch(`${API_URL}/items`, {
+    const res = await fetch(`${API_URL}/items/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     if (res.ok) {
-      const allItems = await res.json();
-      const currentItem = allItems.find((i) => i.id === parseInt(id));
-      if (currentItem) {
-        setItem(currentItem);
-        setEditTitle(currentItem.title);
-      }
+      const data = await res.json();
+      setItem(data);
+      setEditTitle(data.title);
+      setEditDesc(data.description || "");
+    } else {
+      navigate("/");
     }
   };
 
@@ -44,19 +45,25 @@ export default function ItemDetail({ user }) {
     }
   };
 
-  // Guardar cambio de nombre
-  const handleSaveTitle = async () => {
+  // Guardar cambio de nombre y descripción
+  const handleSave = async () => {
     const token = await user.getIdToken();
-    await fetch(`${API_URL}/items/${id}`, {
+    const res = await fetch(`${API_URL}/items/${id}`, {
       method: "PUT",
       headers: { 
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}` 
       },
-      body: JSON.stringify({ title: editTitle }),
+      body: JSON.stringify({ 
+        title: editTitle,
+        description: editDesc
+      }),
     });
-    setItem({ ...item, title: editTitle });
-    setIsEditing(false);
+    
+    if (res.ok) {
+        setItem({ ...item, title: editTitle, description: editDesc });
+        setIsEditing(false);
+    }
   };
 
   // Formatear fecha
@@ -79,27 +86,46 @@ export default function ItemDetail({ user }) {
           <h1 className="text-xl font-bold text-gray-400">Detalles</h1>
         </header>
 
-        {/* TARJETA PRINCIPAL (EDITAR NOMBRE) */}
+        {/* TARJETA PRINCIPAL (EDITAR NOMBRE Y DESCRIPCIÓN) */}
         <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
           <div className="flex justify-between items-start mb-2">
-            <span className="text-xs text-gray-400 uppercase tracking-wider font-bold">Nombre</span>
+            <span className="text-xs text-gray-400 uppercase tracking-wider font-bold flex items-center gap-1">
+              {item.is_hidden && <span title="Encriptado">🔒</span>}
+              Nombre y Descripción
+            </span>
             {!isEditing && (
               <button onClick={() => setIsEditing(true)} className="text-xs text-blue-500 font-bold">EDITAR</button>
             )}
           </div>
 
           {isEditing ? (
-            <div className="flex gap-2">
+            <div className="flex flex-col gap-3">
               <input 
                 value={editTitle}
                 onChange={(e) => setEditTitle(e.target.value)}
                 className="w-full text-2xl font-bold border-b-2 border-blue-500 outline-none pb-1"
+                placeholder="Título"
                 autoFocus
               />
-              <button onClick={handleSaveTitle} className="bg-blue-600 text-white px-3 rounded-lg text-sm">OK</button>
+              <textarea
+                value={editDesc}
+                onChange={(e) => setEditDesc(e.target.value)}
+                className="w-full text-gray-600 border border-gray-200 rounded-lg p-2 outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Descripción o secreto..."
+                rows="3"
+              />
+              <div className="flex gap-2 justify-end">
+                <button onClick={() => setIsEditing(false)} className="px-4 py-2 text-gray-500 text-sm font-bold">CANCELAR</button>
+                <button onClick={handleSave} className="bg-blue-600 text-white px-6 py-2 rounded-lg text-sm font-bold shadow-sm">GUARDAR</button>
+              </div>
             </div>
           ) : (
-            <h2 className="text-3xl font-bold text-gray-800">{item.title}</h2>
+            <>
+              <h2 className="text-3xl font-bold text-gray-800">{item.title}</h2>
+              {item.description && (
+                <p className="mt-2 text-gray-600 bg-gray-50 p-3 rounded-xl border border-gray-100 whitespace-pre-wrap">{item.description}</p>
+              )}
+            </>
           )}
           
           <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center">
